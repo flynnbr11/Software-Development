@@ -13,6 +13,18 @@ class Card(object):
     def get_money(self):
             return self.values[1]
 
+def setUpPlayers():
+    pO = {'name': 'player one', 'health': 30, 'deck': None, 'hand': None, 'active': None, 'handsize': 5,
+                 'discard': None}
+    pC = {'name': 'player computer', 'health': 30, 'deck': None, 'hand': None, 'active': None, 'handsize': 5,
+               'discard': None}
+    central = {'name': 'central', 'active': None, 'activeSize': 5, 'supplement': None, 'deck': None}
+    sdc = [4 * [Card('Archer', (3, 0), 2)], 4 * [Card('Baker', (0, 3), 2)], 3 * [Card('Swordsman', (4, 0), 3)], 2 * [Card('Knight', (6, 0), 5)],3 * [Card('Tailor', (0, 4), 3)],3 * [Card('Crossbowman', (4, 0), 3)],3 * [Card('Merchant', (0, 5), 4)],4 * [Card('Thug', (2, 0), 1)],4 * [Card('Thief', (1, 1), 1)],2 * [Card('Catapault', (7, 0), 6)], 2 * [Card('Caravan', (1, 5), 5)],2 * [Card('Assassin', (5, 0), 4)]]
+
+    return (pO, pC, central, sdc)
+
+
+
 def initialiseDecks(p0, pC):
     playeronedeck = [8 * [Card('Serf', (0, 1), 0)],
                      2 * [Card('Squire', (1, 0), 0)]
@@ -63,19 +75,6 @@ def initialiseDecks(p0, pC):
         pC['hand'].append(card)
 
 	
-def printStateOfPlay(central, pO, pC):
-
-	print "Available Cards"
-	for card in central['active']:
-		  print card
-
-	print "Supplement"
-	if len(central['supplement']) > 0:
-		  print central['supplement'][0]
-
-	print "\nPlayer Health %s" % pO['health']
-	print "Computer Health %s" % pC['health']
-
 
 def playAll(pO, money, attack):
   print "\n Inside play All loop \n"
@@ -186,19 +185,95 @@ def endMove(pO):
           pO['discard'] = []
       card = pO['deck'].pop()
       pO['hand'].append(card)
-  #break
 	
+	
+def printHealths(pO, pC):
+  print "\nPlayer Health %s" % pO['health']
+  print "Computer Health %s" % pC['health']
 
+	
+def printStateOfPlay(pO, pC):
+  printHealths(pO, pC)
+  print "\nwhile loop: Your Hand"
+  index = 0
+  for card in pO['hand']:
+          print "[%s] %s" % (index, card)
+          index = index + 1
+  print "\nYour Values"
+  print " Money %s, Attack %s" % (money, attack)
+
+def getPlayerInput(): 
+  print "\nChoose Action: (P = play all, [0-n] = play that card, B = Buy Card, A = Attack, E = end turn)"
+  act = raw_input("Enter Action: ")
+  print "input = %s \n" %act
+  return act
+  
+  
+  
+  
+def computerBuy(pC, central, money, aggressive):
+    cb = True
+    templist = []
+    print "Starting Money %s and cb %s " % (money, cb)
+    while cb:
+
+		  templist = []
+		  if len(central['supplement']) > 0:
+		      if central['supplement'][0].cost <= money:
+		          templist.append(("S", central['supplement'][0]))
+		  for intindex in range (0, central['activeSize']):
+		      if central['active'][intindex].cost <= money:
+		          templist.append((intindex, central['active'][intindex]))
+		  if len(templist) >0:
+		      highestIndex = 0
+		      for intindex in range(0,len(templist)):
+		          if templist[intindex][1].cost > templist[highestIndex][1].cost:
+		              highestIndex = intindex
+		          if templist[intindex][1].cost == templist[highestIndex][1].cost:
+		              if aggressive:
+		                  if templist[intindex][1].get_attack() >templist[highestIndex][1].get_attack():
+		                      highestIndex = intindex
+		              else:
+		                  if templist[intindex][1].get_attack() >templist[highestIndex][1].get_money():
+		                      highestIndex = intindex
+		      source = templist[highestIndex][0]
+		      if source in range(0,5):
+		          if money >= central['active'][int(source)].cost:
+		              money = money - central['active'][int(source)].cost
+		              card = central['active'].pop(int(source))
+		              print "Card bought %s" % card
+		              pC['discard'].append(card)
+		              if( len(central['deck']) > 0):
+		                  card = central['deck'].pop()
+		                  central['active'].append(card)
+		              else:
+		                  central['activeSize'] = central['activeSize'] - 1
+		          else:
+		              print "Error Occurred"
+		      else:
+		          if money >= central['supplement'][0].cost:
+		              money = money - central['supplement'][0].cost
+		              card = central['supplement'].pop()
+		              pC['discard'].append(card)
+		              print "Supplement Bought %s" % card
+		          else:
+		              print "Error Occurred"  
+		  else:
+		      cb = False
+		  if money == 0:
+		      cb = False
+
+    return (pC, money, central)
+  
+  
+  
+  
+  
 
 if __name__ == '__main__':
 
-    pO = {'name': 'player one', 'health': 30, 'deck': None, 'hand': None, 'active': None, 'handsize': 5,
-                 'discard': None}
-    pC = {'name': 'player computer', 'health': 30, 'deck': None, 'hand': None, 'active': None, 'handsize': 5,
-               'discard': None}
-    central = {'name': 'central', 'active': None, 'activeSize': 5, 'supplement': None, 'deck': None}
-    sdc = [4 * [Card('Archer', (3, 0), 2)], 4 * [Card('Baker', (0, 3), 2)], 3 * [Card('Swordsman', (4, 0), 3)], 2 * [Card('Knight', (6, 0), 5)],3 * [Card('Tailor', (0, 4), 3)],3 * [Card('Crossbowman', (4, 0), 3)],3 * [Card('Merchant', (0, 5), 4)],4 * [Card('Thug', (2, 0), 1)],4 * [Card('Thief', (1, 1), 1)],2 * [Card('Catapault', (7, 0), 6)], 2 * [Card('Caravan', (1, 5), 5)],2 * [Card('Assassin', (5, 0), 4)]]
-
+    pO, pC, central, sdc = setUpPlayers() #initialise players and decks ???
+    
     initialiseDecks(pO, pC)
 
     print "Available Cards"
@@ -220,21 +295,9 @@ if __name__ == '__main__':
         attack = 0
         while True:
 
-            print "\nPlayer Health %s" % pO['health']
-            print "Computer Health %s" % pC['health']
-
-            print "\nwhile loop: Your Hand"
-            index = 0
-            for card in pO['hand']:
-                    print "[%s] %s" % (index, card)
-                    index = index + 1
-            print "\nYour Values"
-            print "start of while loop: Money %s, Attack %s" % (money, attack)
-            print "\nChoose Action: (P = play all, [0-n] = play that card, B = Buy Card, A = Attack, E = end turn)"
-
-            act = raw_input("Enter Action: ")
-            print "input = %s \n" %act
-
+            printStateOfPlay(pO, pC) 
+            act = getPlayerInput()
+            
             if act == 'P':
                 print "\n act = p so entering play loop \n"
                 money, attack = playAll(pO, money, attack)
@@ -250,10 +313,7 @@ if __name__ == '__main__':
             if act == 'E':
                 endMove(pO)
                 break
-
         
-        #printStateOfPlay(central, pO, pC)
-        #"""
         print "Available Cards"
         for card in central['active']:
             print card
@@ -262,11 +322,11 @@ if __name__ == '__main__':
         if len(central['supplement']) > 0:
             print central['supplement'][0]
 
-        print "\nPlayer Health %s" % pO['health']
-        print "Computer Health %s" % pC['health']
-        #"""
+        printHealths(pO, pC)
+
         money = 0
         attack = 0
+
         for x in range(0, len(pC['hand'])):
                         card = pC['hand'].pop()
                         pC['active'].append(card)
@@ -277,60 +337,12 @@ if __name__ == '__main__':
         print " Computer attacking with strength %s" % attack
         pO['health'] = pO['health'] - attack
         attack = 0
-        print "\nPlayer Health %s" % pO['health']
-        print "Computer Health %s" % pC['health']
+
+        printHealths(pO, pC)
         print " Computer player values attack %s, money %s" % (attack, money)
         print "Computer buying"
         if money > 0:
-            cb = True
-            templist = []
-            print "Starting Money %s and cb %s " % (money, cb)
-            while cb:
-                templist = []
-                if len(central['supplement']) > 0:
-                    if central['supplement'][0].cost <= money:
-                        templist.append(("S", central['supplement'][0]))
-                for intindex in range (0, central['activeSize']):
-                    if central['active'][intindex].cost <= money:
-                        templist.append((intindex, central['active'][intindex]))
-                if len(templist) >0:
-                    highestIndex = 0
-                    for intindex in range(0,len(templist)):
-                        if templist[intindex][1].cost > templist[highestIndex][1].cost:
-                            highestIndex = intindex
-                        if templist[intindex][1].cost == templist[highestIndex][1].cost:
-                            if aggressive:
-                                if templist[intindex][1].get_attack() >templist[highestIndex][1].get_attack():
-                                    highestIndex = intindex
-                            else:
-                                if templist[intindex][1].get_attack() >templist[highestIndex][1].get_money():
-                                    highestIndex = intindex
-                    source = templist[highestIndex][0]
-                    if source in range(0,5):
-                        if money >= central['active'][int(source)].cost:
-                            money = money - central['active'][int(source)].cost
-                            card = central['active'].pop(int(source))
-                            print "Card bought %s" % card
-                            pC['discard'].append(card)
-                            if( len(central['deck']) > 0):
-                                card = central['deck'].pop()
-                                central['active'].append(card)
-                            else:
-                                central['activeSize'] = central['activeSize'] - 1
-                        else:
-                            print "Error Occurred"
-                    else:
-                        if money >= central['supplement'][0].cost:
-                            money = money - central['supplement'][0].cost
-                            card = central['supplement'].pop()
-                            pC['discard'].append(card)
-                            print "Supplement Bought %s" % card
-                        else:
-                            print "Error Occurred"
-                else:
-                    cb = False
-                if money == 0:
-                    cb = False
+            pC, money, central = computerBuy(pC, central, money, aggressive	)
         else:
             print "No Money to buy anything"
 
@@ -357,9 +369,8 @@ if __name__ == '__main__':
         print "Supplement"
         if len(central['supplement']) > 0:
             print central['supplement'][0]
-
-        print "\nPlayer Health %s" % pO['health']
-        print "Computer Health %s" % pC['health']
+        
+        printHealths(pO, pC)
 
         if pO['health'] <= 0:
             cG = False
