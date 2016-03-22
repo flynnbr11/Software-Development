@@ -5,6 +5,42 @@ from printFunctions import *
 from gameSetupAndPlayFunctions import *
 
   
+
+def computerTurn(playerOne, playerComputer, centralDeck, aggressive):
+  money = 0
+  attack = 0
+  
+  playerComputer, money, attack = fillComputersHand(playerComputer, money, attack)
+
+  print " Computer player values attack %s, money %s" % (attack, money)
+  print " Computer attacking with strength %s" % attack
+  playerOne['health'] = playerOne['health'] - attack
+  attack = 0
+
+  printHealths(playerOne, playerComputer)
+  
+  print "Computer player values attack %s, money %s" % (attack, money)
+  print "Computer buying"
+  if money > 0:
+      playerComputer, money, centralDeck = computerPurchase(playerComputer, centralDeck, money, aggressive	)
+  else:
+      print "No Money to buy anything"
+
+  playerComputer = updateComputerHand(playerComputer)
+
+  print "Computer turn ending"
+
+  return (playerOne, playerComputer, centralDeck)  
+  
+  
+def fillComputersHand(playerComputer, money, attack):
+  for x in range(0, len(playerComputer['hand'])):
+                  card = playerComputer['hand'].pop()
+                  playerComputer['active'].append(card)
+                  money = money + card.get_money()
+                  attack = attack + card.get_attack()
+  return (playerComputer, money, attack)	  
+  
 def computerPurchase(playerComputer, centralDeck, money, aggressive):
     computerBuy = True
     templist = []
@@ -76,37 +112,6 @@ def updateComputerHand(playerComputer):
 		          playerComputer['hand'].append(card)
 	return playerComputer
 	
-def fillComputersHand(playerComputer, money, attack):
-  for x in range(0, len(playerComputer['hand'])):
-                  card = playerComputer['hand'].pop()
-                  playerComputer['active'].append(card)
-                  money = money + card.get_money()
-                  attack = attack + card.get_attack()
-  return (playerComputer, money, attack)	
 
 
-def computerTurn(playerOne, playerComputer, centralDeck, aggressive):
-  money = 0
-  attack = 0
-  
-  playerComputer, money, attack = fillComputersHand(playerComputer, money, attack)
 
-  print " Computer player values attack %s, money %s" % (attack, money)
-  print " Computer attacking with strength %s" % attack
-  playerOne['health'] = playerOne['health'] - attack
-  attack = 0
-
-  printHealths(playerOne, playerComputer)
-  
-  print "Computer player values attack %s, money %s" % (attack, money)
-  print "Computer buying"
-  if money > 0:
-      playerComputer, money, centralDeck = computerPurchase(playerComputer, centralDeck, money, aggressive	)
-  else:
-      print "No Money to buy anything"
-
-  playerComputer = updateComputerHand(playerComputer)
-
-  print "Computer turn ending"
-
-  return (playerOne, playerComputer, centralDeck)

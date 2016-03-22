@@ -119,28 +119,20 @@ def endGameCheck(playerOne, playerComputer, centralDeck, continueGame):
   and the remaining cards in the central deck. 
   If the game should end, set continueGame = 0 and return it to the main.
   """
-  if playerOne['health'] <= 0:
+  
+  if playerOne['health'] <= 0 or playerComputer['health'] <= 0 or centralDeck['activeSize'] == 0:
       continueGame = False
-      print "Computer wins"
-  elif playerComputer['health'] <= 0:
-      continueGame = False
-      print 'Player One Wins'
-  elif centralDeck['activeSize'] == 0:
-      print "No more cards available"
-      if playerOne['health'] > playerComputer['health']:
-          print "Player One Wins on Health"
+      if centralDeck['activeSize'] == 0:
+          print "No more cards available\n"
+
+      if playerOne['health'] == playerComputer['health']:
+          print "Game finishes in a draw, both players have health %s \n" %(playerOne['health'])
+  
+      elif playerOne['health'] > playerComputer['health']:
+          print "Player One wins on health. \n"
+          
       elif playerComputer['health'] > playerOne['health']:
-          print "Computer Wins"
-      else:
-          pHT = 0
-          pCT = 0 ##this doesn't make any sense
-          if pHT > pCT:
-              print "Player One Wins on Card Strength"
-          elif pCT > pHT:
-              print "Computer Wins on Card Strength"
-          else:
-              print "Draw"
-      continueGame = False
+          print "Computer wins on health\n"
 
   return continueGame
   

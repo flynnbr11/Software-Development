@@ -2,15 +2,53 @@ import itertools, random
 from cardClass import *
 from printFunctions import *
 
+def askToPlay():
+  """
+  Ask the user if they want to play the game. 
+  If they respond Y (or y), ask them what opponent type they want. 
+  Then set continueGame = 0, which gets passed to the main, and used in a 
+  while loop for duration of game. 
+  If they respond N (or n), we exit the program. 
+  """
+  invalidResponse1 = 1
+  invalidResponse2 = 1
+  aggressive = 0
+  while invalidResponse1:
+      playGame = raw_input('Do you want to play a game?: \n')
+      if playGame=='Y' or playGame == 'y':
+          continueGame = 1
+          invalidResponse1 = 0    
+      elif playGame == 'N' or playGame == 'n':
+          continueGame = 0
+          invalidResponse1 = 0
+          invalidResponse2 =0
+      else: 
+          print "\t \t Please choose either Y or N \n"
+  while invalidResponse2:
+      opponentType = raw_input("Do you want an aggressive (A) opponent or an acquisative (Q) opponent \n")
+      if opponentType == 'A' or opponentType == 'a':
+          aggressive = 1
+          invalidResponse2 = 0
+      elif opponentType == 'Q' or opponentType == 'q':
+          aggressive = 0
+          invalidResponse2 = 0
+      else: 
+          print "\t \t Please choose either A or Q"                    
+  return (continueGame, aggressive)
+
 
 def setUpPlayers():
+    """
+    Initialise playerOne, playerComputer and centralDeck, and return them.
+    """
+
     playerOne = {'name': 'player one', 'health': 30, 'deck': None, 'hand': None, 'active': None, 'handsize': 5,
                  'discard': None}
     playerComputer = {'name': 'player computer', 'health': 30, 'deck': None, 'hand': None, 'active': None, 'handsize': 5,
                'discard': None}
     centralDeck = {'name': 'centralDeck', 'active': None, 'activeSize': 5, 'supplement': None, 'deck': None}
     sharedDeck = [4 * [Card('Archer', (3, 0), 2)],
-           4 * [Card('Baker', (0, 3), 2)],
+           4 * [Card('Baker', (0, 3), 2)],	
            3 * [Card('Swordsman', (4, 0), 3)],
            2 * [Card('Knight', (6, 0), 5)],
            3 * [Card('Tailor', (0, 4), 3)],
@@ -76,6 +114,11 @@ def setUpPlayers():
     
     
 def endGameCheck(playerOne, playerComputer, centralDeck, continueGame):
+  """
+  Tests whether the game should end, based on the health of the players
+  and the remaining cards in the central deck. 
+  If the game should end, set continueGame = 0 and return it to the main.
+  """
   if playerOne['health'] <= 0:
       continueGame = False
       print "Computer wins"
@@ -102,25 +145,21 @@ def endGameCheck(playerOne, playerComputer, centralDeck, continueGame):
   return continueGame
   
  
-def newGame(continueGame, oT, playerOne, playerComputer, centralDeck):
-  
-  playGame = raw_input("\nDo you want to play another game?:")
-  continueGame = (playGame=='Y')
-  if continueGame:
-      oT = raw_input("Do you want an aggressive (A) opponent or an acquisative (Q) opponent")
-      aggressive = (oT=='A')
-      
+def rematch(playerOne, playerComputer, centralDeck):
+  """
+  Asks the user if they want a rematch. 
+  If so, reset values of players and decks.
+  """
+  continueGame = 0
+  aggressive = 0
+  continueGame, aggressive = askToPlay()
+  if continueGame == 1:
       playerOne, playerComputer, centralDeck = setUpPlayers()
 
-      printAvailCards(centralDeck)
-        
-  return (continueGame, oT, playerOne, playerComputer, centralDeck)
+  return (continueGame, aggressive, playerOne, playerComputer, centralDeck)
 
-def getPlayerInput(): 
-  print "\nChoose Action: (P = play all, [0-n] = play that card, B = Buy Card, A = Attack, E = end turn)"
-  act = raw_input("Enter Action: ")
-  print "input = %s \n" %act
-  return act
+
+
 
     
 
