@@ -1,6 +1,12 @@
 import itertools, random
 from cardClass import *
 
+"""
+These functions are only removed to here for simplicity and readability.
+They are self explanatory". 
+"""
+
+
 def printAvailCards(centralDeck):
   print "Available Cards"
   max = centralDeck['activeSize']
@@ -23,7 +29,7 @@ def printHealths(playerOne, playerComputer):
 	
 def printStateOfPlay(playerOne, playerComputer, money, attack):
   printHealths(playerOne, playerComputer)
-  print "\nwhile loop: Your Hand"
+  print "\n Your Hand"
   index = 0
   for card in playerOne['hand']:
           print "[%s] %s" % (index, card)

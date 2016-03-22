@@ -7,6 +7,10 @@ from gameSetupAndPlayFunctions import *
   
 
 def computerTurn(playerOne, playerComputer, centralDeck, aggressive):
+  """
+  Simulate opponent's moves. 
+  Update values/hands of both user and computer based on computer's moves. 
+  """  
   money = 0
   attack = 0
   
@@ -34,6 +38,9 @@ def computerTurn(playerOne, playerComputer, centralDeck, aggressive):
   
   
 def fillComputersHand(playerComputer, money, attack):
+  """
+  Initiate computer's active hand from cards in their discard hand. 
+  """
   for x in range(0, len(playerComputer['hand'])):
                   card = playerComputer['hand'].pop()
                   playerComputer['active'].append(card)
@@ -42,6 +49,10 @@ def fillComputersHand(playerComputer, money, attack):
   return (playerComputer, money, attack)	  
   
 def computerPurchase(playerComputer, centralDeck, money, aggressive):
+    """
+    Computer purchases which cards it can afford based on the preference
+    of aggressive or acquisative. 
+    """
     computerBuy = True
     templist = []
     print "Starting Money %s and computerBuy %s " % (money, computerBuy)
@@ -97,6 +108,10 @@ def computerPurchase(playerComputer, centralDeck, money, aggressive):
   
   
 def updateComputerHand(playerComputer):
+	"""
+	Replaces the cards in the computers hand into discard deck
+	and shuffles discard deck.
+	"""
 	if (len(playerComputer['hand']) >0 ):
 		  for x in range(0, len(playerComputer['hand'])):
 		      playerComputer['discard'].append(playerComputer['hand'].pop())

@@ -56,6 +56,10 @@ def getPlayerInput():
 
 
 def playAll(playerOne, money, attack):
+  """ 
+  User plays all cards. Gives values of money and attack from their hand
+  to user. 
+  """
   print "\n Inside play All loop \n"
   if(len(playerOne['hand'])>0):
       for x in range(0, len(playerOne['hand'])):
@@ -79,6 +83,10 @@ def playAll(playerOne, money, attack):
   return (money, attack)
 
 def digitInput(playerOne, money, attack, act):
+	"""
+	User is playing one particular card.
+	Gives values of money and attack of that card to the user. 
+	"""
 	if( int(act) < len(playerOne['hand'])):
 		card = playerOne['hand'].pop(int(act))
 		playerOne['active'].append(card)
@@ -100,56 +108,71 @@ def digitInput(playerOne, money, attack, act):
 	return (money, attack)
 
 def  buyCards(playerOne, money, attack, centralDeck):
-
+	"""
+	User wants to buy cards from centralDeck. 
+	Only permitted if user has any money. 
+	Subtracts the value of the card they're buying from their money, 
+	and adds card to their discard deck. 
+	"""
+	if money <= 0:
+		  print "Not enough money to buy \n"
 	notending = True
 	while money > 0:
-		  print "Available Cards"
-		  ind = 0
-		  for card in centralDeck['active']:
-		      print "[%s] %s" % (ind,card)
-		      ind = ind + 1
-		  print "Choose a card to buy [0-n], S for supplement, E to end buying"
-		  buyValue = raw_input("Choose option: ")
-		  if buyValue == 'S' or buyValue == 's':
-		      if len(centralDeck['supplement']) > 0:
-		          if money >= centralDeck['supplement'][0].cost:
-		              money = money - centralDeck['supplement'][0].cost
-		              playerOne['discard'].append(centralDeck['supplement'].pop())
-		              print "Supplement Bought"
-		          else:
-		              print "insufficient money to buy"
-		      else:
-		          print "no supplements left"
-		  elif buyValue == 'E' or buyValue == 'e':
-		      notending = False
-		      break;
-		  elif buyValue.isdigit():
-		      if int(buyValue) < len(centralDeck['active']):
-		           if money >= centralDeck['active'][int(buyValue)].cost:
-		              money = money - centralDeck['active'][int(buyValue)].cost
-		              playerOne['discard'].append(centralDeck['active'].pop(int(buyValue)))
-		              if( len(centralDeck['deck']) > 0):
-		                  card = centralDeck['deck'].pop()
-		                  centralDeck['active'].append(card)
-		              else:
-		                  centralDeck['activeSize'] = centralDeck['activeSize'] - 1
-		              print "Card bought"
-		           else:
-		              print "insufficient money to buy"
-		      else:
-		           print "enter a valid index number"
-		  else:
-		      print "Enter a valid option"
+			print "Available Cards"
+			ind = 0
+			for card in centralDeck['active']:
+			    print "[%s] %s" % (ind,card)
+			    ind = ind + 1
+			print "Choose a card to buy [0-n], S for supplement, E to end buying"
+			buyValue = raw_input("Choose option: ")
+			if buyValue == 'S' or buyValue == 's':
+			    if len(centralDeck['supplement']) > 0:
+			        if money >= centralDeck['supplement'][0].cost:
+			            money = money - centralDeck['supplement'][0].cost
+			            playerOne['discard'].append(centralDeck['supplement'].pop())
+			            print "Supplement Bought"
+			        else:
+			            print "insufficient money to buy"
+			    else:
+			        print "no supplements left"
+			elif buyValue == 'E' or buyValue == 'e':
+			    notending = False
+			    break;
+			elif buyValue.isdigit():
+			    if int(buyValue) < len(centralDeck['active']):
+			         if money >= centralDeck['active'][int(buyValue)].cost:
+			            money = money - centralDeck['active'][int(buyValue)].cost
+			            playerOne['discard'].append(centralDeck['active'].pop(int(buyValue)))
+			            if( len(centralDeck['deck']) > 0):
+			                card = centralDeck['deck'].pop()
+			                centralDeck['active'].append(card)
+			            else:
+			                centralDeck['activeSize'] = centralDeck['activeSize'] - 1
+			            print "Card bought"
+			         else:
+			            print "insufficient money to buy"
+			    else:
+			         print "enter a valid index number"
+			else:
+			    print "Enter a valid option"
 
 	return(playerOne, money, attack, centralDeck)
 
 def attackFunction(playerComputer, attack):
+	"""
+	User attacks opponent. 
+	Subtracts strength of user's attack from health of opponent.
+	Resets user's attack to 0. 
+	"""
 	playerComputer['health'] = playerComputer['health'] - attack
 	attack = 0
 	return (playerComputer, attack) ##should this not return playerComputer so health is updated? seems to work without returning health
 	
 
 def endMove(playerOne):
+  """
+  Player ends their move. Returns to main gameplay arena. 
+  """
   if (len(playerOne['hand']) >0 ):
       for x in range(0, len(playerOne['hand'])):
           playerOne['discard'].append(playerOne['hand'].pop())

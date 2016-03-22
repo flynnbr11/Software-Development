@@ -1,3 +1,8 @@
+"""
+Define a class for Card.
+Can then use instances of this for all card types.
+"""
+
 class Card(object):
     def __init__(self, name, values=(0, 0), cost=1, clan=None):
         self.name = name

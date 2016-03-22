@@ -31,13 +31,14 @@ if __name__ == '__main__':
 
       """
       Test whether this round of moves has caused the end of the game.
-      If so, continueGame = 0. 
+      If so, continueGame = 0, so exit while loop unless value rechanged later.  
       """
       continueGame = endGameCheck(playerOne, playerComputer, 
           centralDeck, continueGame)
 
       """
-      If game is over, ask to play again. If so, reset values. 
+      If game is over, ask to play again. 
+      If so, reset values; reset continueGame=1.
       If not, while loop terminates and program exits. 
       """
       if not continueGame: 
